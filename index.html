@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blue Zone Habits Comparison</title>
+    <style>
+        .blue-zone-table-container {
+            box-sizing: border-box;
+            max-width: 1200px;
+            margin: 0 auto;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .blue-zone-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .blue-zone-header h2 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        .blue-zone-description {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .blue-zone-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .blue-zone-search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+        .blue-zone-search-box input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .blue-zone-sort-options {
+            display: flex;
+            gap: 10px;
+        }
+        .blue-zone-sort-options select {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .blue-zone-table-wrapper {
+            overflow-x: auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        .blue-zone-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+        .blue-zone-table th {
+            background-color: #3498db;
+            color: white;
+            text-align: left;
+            padding: 15px;
+            cursor: pointer;
+            position: relative;
+            user-select: none;
+        }
+        .blue-zone-table th:hover {
+            background-color: #2980b9;
+        }
+        .blue-zone-table th::after {
+            content: '↕';
+            position: absolute;
+            right: 15px;
+            opacity: 0.7;
+        }
+        .blue-zone-table th.asc::after {
+            content: '↑';
+        }
+        .blue-zone-table th.desc::after {
+            content: '↓';
+        }
+        .blue-zone-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .blue-zone-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .blue-zone-table tr:hover {
+            background-color: #e8f4fc;
+        }
+        .impact-positive {
+            color: #27ae60;
+            font-weight: 600;
+        }
+        .blue-zone-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .blue-zone-stat-card {
+            flex: 1;
+            min-width: 200px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+        .blue-zone-stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #3498db;
+            margin: 10px 0;
+        }
+        .blue-zone-stat-label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        .blue-zone-footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        @media (max-width: 768px) {
+            .blue-zone-header h2 { font-size: 1.8rem; }
+            .blue-zone-table th, .blue-zone-table td { padding: 12px 10px; }
+            .blue-zone-controls { flex-direction: column; }
+            .blue-zone-sort-options { flex-direction: column; }
+        }
+        @media (max-width: 480px) {
+            .blue-zone-header h2 { font-size: 1.6rem; }
+            .blue-zone-table th, .blue-zone-table td { padding: 10px 8px; font-size: 0.9rem; }
+            .blue-zone-stat-card { min-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="blue-zone-table-container">
+        <header class="blue-zone-header">
+            <h2>Blue Zone Habits vs Modern Habits</h2>
+            <p class="blue-zone-description">Compare the lifestyle habits of people in Blue Zones (areas with high longevity) with typical modern habits and their health impacts.</p>
+        </header>
+
+        <div class="blue-zone-controls">
+            <div class="blue-zone-search-box">
+                <input type="text" id="searchInput" placeholder="Search habits or health impacts...">
+            </div>
+            <div class="blue-zone-sort-options">
+                <select id="sortColumn">
+                    <option value="0">Sort by Blue Zone Habits</option>
+                    <option value="1">Sort by Modern Habits</option>
+                    <option value="2">Sort by Health Impact</option>
+                </select>
+                <select id="sortDirection">
+                    <option value="asc">Ascending</option>
+                    <option value="desc">Descending</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="blue-zone-table-wrapper">
+            <table class="blue-zone-table" id="habitsTable">
+                <thead>
+                    <tr>
+                        <th data-column="0">Blue Zone Habits</th>
+                        <th data-column="1">Typical Modern Habits</th>
+                        <th data-column="2">Health Impact</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Walk daily for errands</td><td>Drive everywhere</td><td class="impact-positive">2 years longer life</td></tr>
+                    <tr><td>Eat beans 4x/week</td><td>Eat meat daily</td><td class="impact-positive">Lower heart disease risk</td></tr>
+                    <tr><td>Stop at 80% full</td><td>Eat until completely full</td><td class="impact-positive">Healthy weight maintenance</td></tr>
+                    <tr><td>Strong family bonds</td><td>Limited family time</td><td class="impact-positive">3 years longer life</td></tr>
+                    <tr><td>Daily stress relief</td><td>Chronic stress</td><td class="impact-positive">Lower inflammation</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="blue-zone-stats">
+            <div class="blue-zone-stat-card">
+                <div class="blue-zone-stat-value">5</div>
+                <div class="blue-zone-stat-label">Blue Zone Habits</div>
+            </div>
+            <div class="blue-zone-stat-card">
+                <div class="blue-zone-stat-value">5</div>
+                <div class="blue-zone-stat-label">Modern Habits</div>
+            </div>
+            <div class="blue-zone-stat-card">
+                <div class="blue-zone-stat-value">5</div>
+                <div class="blue-zone-stat-label">Positive Health Impacts</div>
+            </div>
+        </div>
+
+        <footer class="blue-zone-footer">
+            <p>Data based on research from Blue Zones - regions with the highest longevity rates</p>
+            <p>
+                Read the full article on 
+                <a href="https://healthiwellness.com/7-proven-lifestyle-health-habits-for-longevity-that-really-work/" 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   style="color:#3498db; text-decoration:none; font-weight:600;">
+                   HealthiWellness.com
+                </a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const table = document.getElementById('habitsTable');
+            const searchInput = document.getElementById('searchInput');
+            const sortColumn = document.getElementById('sortColumn');
+            const sortDirection = document.getElementById('sortDirection');
+            const headers = table.querySelectorAll('th');
+            let currentSortColumn = 0;
+            let currentSortDirection = 'asc';
+
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const rows = table.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    let match = false;
+                    cells.forEach(cell => {
+                        if (cell.textContent.toLowerCase().includes(searchTerm)) match = true;
+                    });
+                    row.style.display = match ? '' : 'none';
+                });
+            });
+
+            function sortTable(column, direction) {
+                const tbody = table.querySelector('tbody');
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+                rows.sort((a, b) => {
+                    const aVal = a.cells[column].textContent.toLowerCase();
+                    const bVal = b.cells[column].textContent.toLowerCase();
+                    return direction === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+                });
+                tbody.innerHTML = '';
+                rows.forEach(row => tbody.appendChild(row));
+                headers.forEach((h, i) => {
+                    h.classList.remove('asc', 'desc');
+                    if (i === column) h.classList.add(direction);
+                });
+            }
+
+            headers.forEach(header => {
+                header.addEventListener('click', function() {
+                    const col = parseInt(this.getAttribute('data-column'));
+                    if (currentSortColumn === col) {
+                        currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        currentSortColumn = col;
+                        currentSortDirection = 'asc';
+                    }
+                    sortTable(currentSortColumn, currentSortDirection);
+                    sortColumn.value = currentSortColumn;
+                    sortDirection.value = currentSortDirection;
+                });
+            });
+
+            sortColumn.addEventListener('change', function() {
+                currentSortColumn = parseInt(this.value);
+                sortTable(currentSortColumn, currentSortDirection);
+            });
+
+            sortDirection.addEventListener('change', function() {
+                currentSortDirection = this.value;
+                sortTable(currentSortColumn, currentSortDirection);
+            });
+
+            sortTable(currentSortColumn, currentSortDirection);
+        });
+    </script>
+</body>
+</html>
